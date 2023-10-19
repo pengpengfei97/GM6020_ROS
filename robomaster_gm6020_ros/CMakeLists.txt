@@ -36,10 +36,10 @@ generate_messages(
 
 
 catkin_package(
- INCLUDE_DIRS include
- LIBRARIES robomaster_gm6020_ros
+ # INCLUDE_DIRS include
+ # LIBRARIES robomaster_gm6020_ros
  CATKIN_DEPENDS roscpp rospy std_msgs tf
- DEPENDS system_lib
+ # DEPENDS system_lib
 )
 
 

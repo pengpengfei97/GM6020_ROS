@@ -22,13 +22,7 @@
 
 using namespace std;
 
-float setting_speed;        // 设置旋转速度
-float setting_angle;        // 设置旋转角度范围
-
-ros::Publisher motor_pub;   // 电机话题发布器
-
 #define LIMIT_MIN_MAX(x, min, max) (x) = (((x) <= (min)) ? (min) : (((x) >= (max)) ? (max) : (x)))
-
 
 typedef struct
 {
@@ -59,15 +53,27 @@ typedef struct
 pid_struct_t motor_pid;  // 电机PID值全局变量
 motor_ctrl_t glb_motor;  // 单机反馈的数据和要发送给电机的数据
 
+float speed;        // 设置旋转速度
+float angle;        // 设置旋转角度范围
+
+float pid_p;    //pid参数设置
+float pid_i;
+float pid_d;
+
+int delay_time;
+
+ros::Publisher motor_pub;   // 电机话题发布器
+
 int s;
 float glb_angle;
 mutex glb_angle_lock;
 
 int direction = 1;      // 旋转方向标记（用于测试方向改变时点云的错位情况）
 
+
+
 // pid参数初始化函数
-static void pid_init(pid_struct_t *pid, float kp, float ki, float kd,
-                     float i_max, float out_max)
+static void pid_init(pid_struct_t *pid, float kp, float ki, float kd, float i_max, float out_max)
 {
     pid->kp = kp;
     pid->ki = ki;
@@ -98,10 +104,10 @@ static float pid_calc(pid_struct_t *pid, float ref, float fdb)
 static void *can_send_thread(void *arg)
 {
 
-    float target_rpm = setting_speed; // setting_speed 全局变量，在主函数设置
+    float target_rpm = speed; // speed 全局变量，在主函数设置
 
     //pid_init(&motor_pid, 10, 2, 0, 30000, 30000); 
-    pid_init(&motor_pid, 40, 3, 0, 30000, 30000);
+    pid_init(&motor_pid, pid_p, pid_i, pid_d, 30000, 30000);
 
     glb_motor.target_volt = 0;
 
@@ -129,15 +135,15 @@ static void *can_send_thread(void *arg)
         }
         glb_angle_lock.lock();
         
-        if (glb_angle > 177 + setting_angle/2) //357
+        if (glb_angle > 177 + angle/2) //357
         {
-            target_rpm = -setting_speed;
+            target_rpm = -speed;
             // direction = 1;
         }
 
-        if (glb_angle < 183 - setting_angle/2) //3
+        if (glb_angle < 183 - angle/2) //3
         {
-            target_rpm = setting_speed;
+            target_rpm = speed;
             // direction = 0;
         }
 
@@ -154,7 +160,7 @@ static void *can_send_thread(void *arg)
 
         glb_motor.target_volt = pid_calc(&motor_pid, target_rpm, glb_motor.fdb_rpm);
         
-        usleep(1000);  // us
+        usleep(delay_time);  // us
     }
 
     return NULL;
@@ -164,7 +170,7 @@ static void *can_send_thread(void *arg)
 static void *can_recv_thread(void *arg)
 {
     struct can_frame frame;  // 接受的CAN信号的数据
-    struct timeval tv;  // 时间戳（设置阈值时间，但是后面好像完全没用）
+    struct timeval tv;  // 时间戳
     fd_set rset;    // long数组，用来存放文件标识符
 
     int nbytes, ret;
@@ -217,14 +223,23 @@ int main(int argc, char **argv)
 
     motor_pub = n.advertise<robomaster_gm6020_ros::MotorMessage>("motor_info", 1000);
 
+    n.param<float>("/speed", speed, 1);
+    n.param<float>("/angle", angle, 180);
+    n.param<float>("/pid_p", pid_p, 10);
+    n.param<float>("/pid_i", pid_i, 2);
+    n.param<float>("/pid_d", pid_d, 0);
+    n.param<int>("/delay_time", delay_time, 1000);
 
-    setting_speed = 1;
-    setting_angle = 180;
+    // speed = 1;
+    // angle = 180;
 
+    ROS_INFO("/speed: %f", speed);
+    ROS_INFO("/angle: %f", angle);
+    ROS_INFO("/pid_p: %f", pid_p);
+    ROS_INFO("/pid_i: %f", pid_i);
+    ROS_INFO("/pid_d: %f", pid_d);
+    ROS_INFO("/delay_time: %d", delay_time);
     
-    cout<<"speed: "<<setting_speed<<endl;
-    cout<<"angle: "<<setting_angle<<endl;
-
 
     //-------------------------------CAN通信配置------------------------------------
     

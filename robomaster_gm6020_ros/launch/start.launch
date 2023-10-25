@@ -1,0 +1,7 @@
+<launch>
+
+<rosparam file="$(find robomaster_gm6020_ros)/config/params.yaml" command="load"/>
+
+<node pkg="robomaster_gm6020_ros" type="motor_ctr_node" name="motor_ctr_node" output="screen" />
+
+</launch>

@@ -1,2 +1,2 @@
 float32 angle
-bool direction
+int8 direction

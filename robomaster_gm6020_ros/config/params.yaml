@@ -1,0 +1,8 @@
+speed: 1  #rpm
+angle: 180  #degree
+
+pid_p: 10
+pid_i: 2
+pid_d: 0
+
+delay_time: 1000  #μs

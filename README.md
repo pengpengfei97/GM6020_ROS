@@ -20,7 +20,7 @@ Before using this package, please ensure that the motor and computer are properl
     sudo apt-get install can-utils
     can dump can0
     ```
-Adjust the DIP switch under the motor, set the motor ID to 7. You can also use other IDs, but please refer to the manual to modify the corresponding value: [Feedback identifier]([/robomaster_gm6020_ros/src/motor_ctr.cpp#260](https://github.com/pengpengfei97/GM6020_ROS/blob/59aea66147ce02a5092528d9b574aa607e1b62a8/robomaster_gm6020_ros/src/motor_ctr.cpp#L260)) and [Control identifier]([/robomaster_gm6020_ros/src/motor_ctr.cpp#117](https://github.com/pengpengfei97/GM6020_ROS/blob/59aea66147ce02a5092528d9b574aa607e1b62a8/robomaster_gm6020_ros/src/motor_ctr.cpp#L117))
+Adjust the DIP switch under the motor, set the motor ID to 7. You can also use other IDs, but please refer to the manual to modify the corresponding value: [Feedback identifier](https://github.com/pengpengfei97/GM6020_ROS/blob/59aea66147ce02a5092528d9b574aa607e1b62a8/robomaster_gm6020_ros/src/motor_ctr.cpp#L260) and [Control identifier](https://github.com/pengpengfei97/GM6020_ROS/blob/59aea66147ce02a5092528d9b574aa607e1b62a8/robomaster_gm6020_ros/src/motor_ctr.cpp#L117)
 
 ## 3.Installation
 
@@ -74,4 +74,4 @@ roslaunch robomaster_gm6020_ros start.launch
 ## Note 
 
 - The motor will automatically rotate after the node starts. Please ensure safety before starting.
-- When the motor rotates to the set angle, it will automatically change direction. If you want it to maintain a single direction of rotation, you can modify function [can_send_thread]([./robomaster_gm6020_ros/src/motor_ctr.cpp#104](https://github.com/pengpengfei97/GM6020_ROS/blob/59aea66147ce02a5092528d9b574aa607e1b62a8/robomaster_gm6020_ros/src/motor_ctr.cpp#L104)https://github.com/pengpengfei97/GM6020_ROS/blob/59aea66147ce02a5092528d9b574aa607e1b62a8/robomaster_gm6020_ros/src/motor_ctr.cpp#L104).
+- When the motor rotates to the set angle, it will automatically change direction. If you want it to maintain a single direction of rotation, you can modify function [can_send_thread](https://github.com/pengpengfei97/GM6020_ROS/blob/59aea66147ce02a5092528d9b574aa607e1b62a8/robomaster_gm6020_ros/src/motor_ctr.cpp#L104).

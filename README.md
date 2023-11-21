@@ -12,7 +12,6 @@ Before using this package, please ensure that the motor and computer are properl
 
 - You can also use a USB-to-CAN adapter for the connection. If you are using a USB to CAN adapter, you can input the following command in the terminal:
     ```bash
-    sudo ip link set can0 down
     sudo modprobe gs_usb && sudo ip link set can0 up type can bitrate 1000000
     ```
     Then use can-utils to read data and test the connection:
